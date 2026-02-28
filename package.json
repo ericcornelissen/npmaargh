@@ -1,0 +1,37 @@
+{
+  "name": "npmaargh",
+  "description": "The npm audit assistant",
+  "version": "1.0.0",
+  "license": "AGPL-3.0-or-later",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ericcornelissen/npmaargh.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ericcornelissen/npmaargh/issues"
+  },
+  "author": {
+    "name": "Eric Cornelissen",
+    "email": "ericornelissen@gmail.com",
+    "url": "https://ericcornelissen.dev/"
+  },
+  "keywords": [
+    "npm",
+    "audit",
+    "assistant",
+    "assistance",
+    "help",
+    "guidance",
+    "node",
+    "security",
+    "advisory",
+    "vulnerability",
+    "vulnerabilities",
+    "dependencies"
+  ],
+  "type": "module",
+  "bin": "./index.js",
+  "dependencies": {
+    "semver": "^7.3.8"
+  }
+}
