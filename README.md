@@ -14,6 +14,15 @@ The report can be used to report blockers upstream or write more targeted
 
 ## Usage
 
+You can either install and run:
+
+```shell
+npm install --global npmaargh
+npmaargh [flags...] [target]
+```
+
+Or use `npx`:
+
 ```shell
 npx npmaargh [flags...] [target]
 ```
@@ -59,3 +68,10 @@ Let's unpack that report:
   tracker of `hello` is included to make it easy to report the blocker.
 - `world@0.1.0` is a transitive dependency of `hello@3.2.1`.
 - `# Need 1.1.1` indicates we need to bump it, because of a known vulnerability.
+
+## License
+
+This software is available under the `AGPL-3.0-or-later` license, see [LICENSE]
+for the full license text.
+
+[LICENSE]: ./LICENSE

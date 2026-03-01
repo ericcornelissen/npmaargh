@@ -69,7 +69,9 @@ async function npmList(subject) {
 	if (!npmListCache.has(subject)) {
 		async function fetch() {
 			const { stdout } = await exec(`npm list ${subject} --json`, { cwd: wd });
-			return JSON.parse(stdout);
+			const list = JSON.parse(stdout);
+			list.version ||= "1.0.0";
+			return list;
 		}
 
 		npmListCache.set(subject, fetch());
@@ -131,7 +133,7 @@ try {
 	try {
 		await exec("npm install --ignore-scripts", { cwd: wd });
 	} catch (error) {
-		console.error("Failed to (re)install dependencies:", error);
+		stdout.write("\rFailed to (re)install dependencies:", error);
 		exit(1);
 	}
 }
@@ -145,7 +147,7 @@ stdout.write("Obtaining audit report...");
 let npmAuditReport;
 try {
 	await exec("npm audit --json", { cwd: wd });
-	console.info("Nothing to audit.");
+	stdout.write("\rNothing to audit.        ");
 	exit(0);
 } catch (error) {
 	npmAuditReport = JSON.parse(error.stdout);
@@ -153,7 +155,7 @@ try {
 
 const reportVersion = npmAuditReport.auditReportVersion;
 if (reportVersion !== 2) {
-	console.error("Unknown audit report version:", reportVersion);
+	stdout.write("\rUnknown audit report version:", reportVersion);
 }
 
 stdout.write("\rObtained audit report.   \n");
