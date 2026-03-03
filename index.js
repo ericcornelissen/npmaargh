@@ -64,13 +64,29 @@ Flags:
 
 /* -------------------------------------------------------------------------- */
 
+let subject = path.basename(wd);
+try {
+	const manifestPath = path.resolve(wd, "package.json");
+	const manifestRaw = await readFile(manifestPath);
+	const manifest = JSON.parse(manifestRaw);
+	subject = manifest.name || subject;
+} catch { }
+
+let version = "";
+try {
+	const { stdout } = await exec("git rev-parse --short HEAD", { cwd: wd });
+	version = `@${stdout.trim()}`;
+} catch { }
+
+/* -------------------------------------------------------------------------- */
+
 const npmListCache = new Map();
 async function npmList(subject) {
 	if (!npmListCache.has(subject)) {
 		async function fetch() {
 			const { stdout } = await exec(`npm list ${subject} --json`, { cwd: wd });
 			const list = JSON.parse(stdout);
-			list.version ||= "1.0.0";
+			list.version = version.substring(1) || list.version || "1.0.0";
 			return list;
 		}
 
@@ -117,7 +133,7 @@ function prerelease(version) {
 /* -------------------------------------------------------------------------- */
 
 console.info("=== npm audit assistant ===");
-console.info(`I'm here to help audit '${path.basename(target)}'.`);
+console.info(`I'm here to help audit '${subject}${version}'.`);
 console.info("");
 
 console.info("=== setup ===");
@@ -133,7 +149,8 @@ try {
 	try {
 		await exec("npm install --ignore-scripts", { cwd: wd });
 	} catch (error) {
-		stdout.write("\rFailed to (re)install dependencies:", error);
+		stdout.write(`\rFailed to (re)install dependencies:\n`);
+		console.info(error);
 		exit(1);
 	}
 }
@@ -147,7 +164,7 @@ stdout.write("Obtaining audit report...");
 let npmAuditReport;
 try {
 	await exec("npm audit --json", { cwd: wd });
-	stdout.write("\rNothing to audit.        ");
+	stdout.write("\rNothing to audit.        \n");
 	exit(0);
 } catch (error) {
 	npmAuditReport = JSON.parse(error.stdout);
@@ -155,7 +172,8 @@ try {
 
 const reportVersion = npmAuditReport.auditReportVersion;
 if (reportVersion !== 2) {
-	stdout.write("\rUnknown audit report version:", reportVersion);
+	stdout.write(`\rUnknown audit report version: ${reportVersion}\n`);
+	exit(1);
 }
 
 stdout.write("\rObtained audit report.   \n");
@@ -191,7 +209,7 @@ stdout.write("\rAnalyzed audit report.   \n");
 
 /* -------------------------------------------------------------------------- */
 
-const SELF = `<${path.basename(target)}>`;
+const SELF = `<${subject}>`;
 
 class Nothing {
 	toString() {
@@ -484,6 +502,8 @@ function pruneNoops(result) {
 }
 
 function print(result, gutter, level) {
+	result.name = result.name.replace(SELF, subject);
+
 	if (!level) {
 		function depth(obj, lvl) {
 			const length = obj.name.length + obj.version.length + lvl;
