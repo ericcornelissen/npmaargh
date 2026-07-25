@@ -84,10 +84,22 @@ const npmListCache = new Map();
 async function npmList(subject) {
 	if (!npmListCache.has(subject)) {
 		async function fetch() {
-			const { stdout } = await exec(`npm list ${subject} --json`, { cwd: wd });
-			const list = JSON.parse(stdout);
-			list.version = version.substring(1) || list.version || "1.0.0";
-			return list;
+			try {
+				const { stdout } = await exec(`npm list ${subject} --json`, { cwd: wd });
+				const list = JSON.parse(stdout);
+				list.version = version.substring(1) || list.version || "1.0.0";
+				return list;
+			} catch (error) {
+				const lockfilePath = path.resolve(wd, "package-lock.json");
+				const lockfileRaw = await readFile(lockfilePath);
+				const lockfile = JSON.parse(lockfileRaw);
+				delete lockfile.packages[""];
+				for (const [key, pkg] of Object.entries(lockfile.packages)) {
+					if (pkg.name === subject) return npmList(path.basename(key));
+				}
+
+				throw error;
+			}
 		}
 
 		npmListCache.set(subject, fetch());
