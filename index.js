@@ -18,7 +18,7 @@
 import { exec as _exec } from "node:child_process";
 import { readFile } from "node:fs/promises";
 import * as path from "node:path";
-import { argv, exit, stdout } from "node:process";
+import { argv, exit, stdout, versions } from "node:process";
 import { promisify } from "node:util";
 
 import * as semver from "semver";
@@ -37,8 +37,9 @@ const wd = path.resolve(target);
 const optHelp = flags.includes("--help");
 const optCompact = flags.includes("--compact");
 const optIncludePrereleases = flags.includes("--prereleases");
+const optVersion = flags.includes("--version");
 
-const unknownFlags = flags.filter(flag => !["--help", "--compact", "--prereleases"].includes(flag));
+const unknownFlags = flags.filter(flag => !["--help", "--compact", "--prereleases", "--version"].includes(flag));
 if (unknownFlags.length !== 0) {
 	console.warn(`unknown flags: '${unknownFlags.join("', '")}'\n`);
 }
@@ -58,7 +59,17 @@ Flags:
   --help         Show this help message.
   --compact      Only show what requires manual action.
   --prereleases  Consider prereleases for upgrading.
+  --version      Show version information.
 `);
+	exit(0);
+}
+
+if (optVersion) {
+	const manifest = await import("./package.json", { with: { type: "json" } });
+	const { stdout } = await exec("npm --version");
+	console.log(`npmaargh : v${manifest.default.version}
+Node.js  : v${versions.node}
+npm      : v${stdout.trim()}`);
 	exit(0);
 }
 
