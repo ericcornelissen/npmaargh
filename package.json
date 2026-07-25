@@ -1,7 +1,7 @@
 {
   "name": "npmaargh",
   "description": "The npm audit assistant",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "license": "AGPL-3.0-only",
   "repository": {
     "type": "git",
@@ -31,6 +31,7 @@
   ],
   "type": "module",
   "bin": "./index.js",
+  "man": "./npmaargh.1",
   "engines": {
     "node": ">=24",
     "npm": ">=11"

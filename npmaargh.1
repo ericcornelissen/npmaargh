@@ -1,0 +1,67 @@
+.TH "npmaargh" "1" "July 2026" "v1.0.3" "User Commands"
+.SH NAME
+npmaargh \- the npm audit assistant
+.SH SYNOPSIS
+.B npmaargh
+[FLAG]...
+[TARGET]
+.SH DESCRIPTION
+.P
+The npm audit assistant - the "rgh" is for dramatic effect, capturing that
+all-too-familiar reaction to running npm audit: "aargh!"
+
+The `npmaargh` CLI is intended to help you resolve `npm audit` reports by
+showing you where in the dependency hierarchy upgrades are blocked. This is
+especially helpful when `npm audit fix` doesn't just solve the problem for you.
+
+The report can be used to report blockers upstream or write more targeted
+override rules.
+.P
+Need more help? Found a bug? Missing something? See:
+.br
+<https://github.com/ericcornelissen/npmaargh>
+.SH OPTIONS
+.TP
+.B --help
+Show the help message.
+.TP
+.B --compact
+Only show what requires manual action.
+.TP
+.B --prereleases
+Consider prereleases for upgrading.
+.SH EXIT STATUS
+.TP
+.B 0
+Audit report created.
+.TP
+.B 1
+An unexpected error occured.
+.SH EXAMPLES
+.TP
+Get an audit report for the current project:
+.EX
+npmaargh
+.EE
+.TP
+Get an audit report for another project:
+.EX
+npmaargh path/to/project
+.EE
+.TP
+Get concise audit report:
+.EX
+npmaargh --compact
+.EE
+.SH AUTHOR
+.P
+Written by Eric Cornelissen.
+.SH COPYRIGHT
+.P
+Copyright \(co 2026 Eric Cornelissen
+.P
+License AGPLv3: GNU Affero GPL version 3
+<https://www.gnu.org/licenses/agpl-3.0.html>
+.P
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by applicable law.
