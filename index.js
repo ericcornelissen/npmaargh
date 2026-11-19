@@ -208,12 +208,12 @@ stdout.write("Analyzing audit report...");
 
 const vulnerabilities = new Map();
 for (const [, info] of Object.entries(npmAuditReport.vulnerabilities)) {
-	if (typeof info.via[0] === "string") {
-		// This entry is not about a vulnerable package.
-		continue;
-	}
-
 	for (const vulnerability of info.via) {
+		if (typeof vulnerability === "string") {
+			// This entry is not about a vulnerable package.
+			continue;
+		}
+
 		const id = vulnerability.url;
 		if (vulnerabilities.has(id)) {
 			vulnerabilities.get(id).ranges.add(vulnerability.range);
